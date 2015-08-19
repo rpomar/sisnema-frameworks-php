@@ -19,7 +19,7 @@ abstract class BancoDados {
 	protected $_ind_case = CASE_UPPER;
 
 	abstract public function Conectar();
-	//abstract public function executaSQL($_sql);
+	abstract public function executaSQL($_sql);
 	//abstract protected function SetNumRows();
 	//abstract protected function navegainterno($_pos);
 	//abstract protected function proximointerno();
@@ -27,17 +27,62 @@ abstract class BancoDados {
 	//abstract public function getLimit($_arr);
 	//abstract protected function SetAffectedRows();
 
-	public function SetServidor($_servidor) {
+	
+	public function getConn(){
+	if (! $this-> _conn)
+	{ $this->SetConn();}
+	
+	return $this-> _conn;
+	
+	
 	}
-
+	public	function getservidor(){
+		return $this->_servidor;
+	}
+	
+	public	function getusuario(){
+		return $this->_usuario;
+	}
+	
+	public	function getsenha(){
+		return $this->_senha;
+	}
+	
+	public	function setservidor($valor){
+		return $this->_servidor = $valor;
+	}
+	public	function setusuario($valor){
+		return $this->_usuario = $valor;
+	}
+	
+	public	function setsenha($valor){
+		return $this->_senha = $valor;
+	}
+	
+	public function Setconn(){
+	
+		if(!$this->_conn){
+		$this->_conn = new mysqli(
+			$this->getservidor(),
+			$this->getusuario(),
+			$this->getsenha()
+		
+		);
+		
+		
+		} else {
+		
+			return $this->_conn;
+		
+		}
+	
+	
+	}
+	
 	public function SetPorta($_porta) {
 	}
 
-	public function SetUsuario($_usuario) {
-	}
-
-	public function SetSenha($_senha) {
-	}
+	
 
 	public function SetBanco($_banco) {
 	}
@@ -100,12 +145,28 @@ abstract class BancoDados {
 
 class mysql extends BancoDados {
 	
-   public function Conectar(){
-   echo "iniciando acesso";
-   $conn = new mysqli('localhost','root','');
-
+   public function __construct(){
+	$this->setservidor('localhost');
+	$this->setusuario('root');
+	$this->setsenha('');
+   
    } 
    
+   public function Conectar(){
+	return $this->getconn();
+	
+   }
+   
+   public function executaSQL($sql){
+		return $this->getconn()->query($sql);
+   
+   
+   
+   }
+   
+   
+   
+   }
 
-}
+
 
