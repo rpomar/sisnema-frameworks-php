@@ -19,16 +19,40 @@ abstract class BancoDados {
 	protected $_ind_case = CASE_UPPER;
 
 	abstract public function Conectar();
-	/*abstract public function executaSQL($_sql);
-	abstract protected function SetNumRows();
+	abstract public function executaSQL($_sql);
+	/*abstract protected function SetNumRows();
 	abstract protected function navegainterno($_pos);
 	abstract protected function proximointerno();
 	abstract public function escapeString($_str);
 	abstract public function getLimit($_arr);
 	abstract protected function SetAffectedRows();*/
 
-	public function SetServidor($_servidor) {
+	public function GetServidor() {
+
+		return $this->_Servidor;
 	}
+
+	public function GetUsuario() {
+		return $this->_Usuario;
+	}
+	public function GetSenha() {
+		return $this->_Senha;
+	}
+
+	public function SetServidor($valor) {
+		$this->_Servidor = $valor;
+	}
+
+	public function SetUsuario($valor) {
+		$this->_Usuario = $valor;
+	}
+
+	public function SetSenha($valor) {
+		$this->_Senha = $valor;
+	}
+
+
+	
 
 	public function GetConn(){
 		if(! $this->_conn)
@@ -36,25 +60,23 @@ abstract class BancoDados {
 		return $this->_conn;
 	}
 
-	public function SetConn($valCon = null){
-		if( $valCon == null){
+	public function SetConn(){
+		if( !$this->_conn){
 			
-			$this->_conn = new mysqli('localhost','root','');
+			$this->_conn = new mysqli(
+				$this->GetServidor(), 
+				$this->GetUsuario(), 
+				$this->GetSenha()
+				);
 
 		} else{
 		
-		$this->_conn = $valCon;
+		return $this->_conn;
 
 		}
 	}
 
 	public function SetPorta($_porta) {
-	}
-
-	public function SetUsuario($_usuario) {
-	}
-
-	public function SetSenha($_senha) {
 	}
 
 	public function SetBanco($_banco) {
@@ -117,10 +139,20 @@ abstract class BancoDados {
 }
 
 class mysql extends BancoDados{
+
+	public function __construct($host = null, $usuario = null, $senha = null){
+		$this->SetServidor($host);
+		$this->SetUsuario($usuario);
+		$this->SetSenha($senha);
+	}
 	public function Conectar(){
 
-		echo "iniciando acesso";
-		$conn = new mysqli('localhost','root','');
+		return $this->GetConn();
+
+	}
+	public function executaSQL($sql){
+
+		return $this->GetConn()->query($sql);
 
 	}
 }
