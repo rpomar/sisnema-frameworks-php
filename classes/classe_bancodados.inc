@@ -19,15 +19,33 @@ abstract class BancoDados {
 	protected $_ind_case = CASE_UPPER;
 
 	abstract public function Conectar();
-	abstract public function executaSQL($_sql);
+	/*abstract public function executaSQL($_sql);
 	abstract protected function SetNumRows();
 	abstract protected function navegainterno($_pos);
 	abstract protected function proximointerno();
 	abstract public function escapeString($_str);
 	abstract public function getLimit($_arr);
-	abstract protected function SetAffectedRows();
+	abstract protected function SetAffectedRows();*/
 
 	public function SetServidor($_servidor) {
+	}
+
+	public function GetConn(){
+		if(! $this->_conn)
+			{$this->SetConn();}
+		return $this->_conn;
+	}
+
+	public function SetConn($valCon = null){
+		if( $valCon == null){
+			
+			$this->_conn = new mysqli('localhost','root','');
+
+		} else{
+		
+		$this->_conn = $valCon;
+
+		}
 	}
 
 	public function SetPorta($_porta) {
@@ -98,5 +116,11 @@ abstract class BancoDados {
 	}
 }
 
+class mysql extends BancoDados{
+	public function Conectar(){
+
+		echo "iniciando acesso";
+		$conn = new mysqli('localhost','root','');
+
+	}
 }
-?>
