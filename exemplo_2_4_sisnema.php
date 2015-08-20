@@ -11,15 +11,15 @@ $insert = $bd->insert(
 		'title', 'body'
 		), 
 	array(
-		'aluno 06', 'fanfarrão'
+		'aluno 10', 'fanfarrao novamente'
 		),
 
 	array(
-		'aluno 07', 'fanfarrão colado'
+		'aluno 20', 'fanfarrao colado'
 		),
 
 	array(
-		'aluno 08', 'fanfarrão colado'
+		'aluno 30', 'fanfarrao colado'
 		)
 
 
