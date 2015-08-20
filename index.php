@@ -1,12 +1,12 @@
 <?php
 
-	require_once ('classes\classe_bancodados.inc');
+	require_once ('classes/classe_bancodados.inc');
 
 
 	//class BD extends BancoDados{};
 
 
-	$bd = new mysql();
+	$bd = new mysql('localhost', 'root');
 
 	//$conn = $bd->GetConn();
 

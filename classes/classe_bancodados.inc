@@ -39,6 +39,10 @@ abstract class BancoDados {
 		return $this->_Senha;
 	}
 
+	public function GetBanco() {
+		return $this->_Banco;
+	}
+
 	public function SetServidor($valor) {
 		$this->_Servidor = $valor;
 	}
@@ -49,6 +53,10 @@ abstract class BancoDados {
 
 	public function SetSenha($valor) {
 		$this->_Senha = $valor;
+	}
+
+	public function SetBanco($banco) {
+		$this->_Banco = $banco;
 	}
 
 
@@ -66,7 +74,8 @@ abstract class BancoDados {
 			$this->_conn = new mysqli(
 				$this->GetServidor(), 
 				$this->GetUsuario(), 
-				$this->GetSenha()
+				$this->GetSenha(),
+				$this->GetBanco()
 				);
 
 		} else{
@@ -79,16 +88,20 @@ abstract class BancoDados {
 	public function SetPorta($_porta) {
 	}
 
-	public function SetBanco($_banco) {
-	}
-
 	public function startTransaction() {
+
+		$this->executaSQL('START TRANSACTION');
 	}
 
 	public function commit() {
+
+			$this->executaSQL('commit');
+
 	}
 
 	public function ROLLBACK() {
+
+			$this->executaSQL('ROLLBACK');
 	}
 
 	protected function isSELECT($_sql,$_res) {
@@ -140,11 +153,42 @@ abstract class BancoDados {
 
 class mysql extends BancoDados{
 
-	public function __construct($host = null, $usuario = null, $senha = null){
+	public function __construct($host = null, $usuario = null, $senha = null, $base = null){
 		$this->SetServidor($host);
 		$this->SetUsuario($usuario);
 		$this->SetSenha($senha);
+		$this->SetBanco($base);
+
 	}
+
+	public function insert($tabela, $campos, $valores){
+
+		if (count($campos) != count ($valores)) {
+			die ('<h1>nao permitido!</h1>');
+		}
+
+		$impcampos = implode(', ', $campos);
+		
+		function test_alter(&$item1){ $item1 = "'$item1'"; }
+
+		array_walk($valores, 'test_alter');
+
+		$impval = implode(', ', $valores);
+
+
+
+		$sqlinsert= "INSERT INTO  $tabela($impcampos) VALUES ($impval)";
+
+		$this->startTransaction();
+		$statusInsert = $this->executaSQL($sqlinsert);
+		$this->commit();
+
+		return $statusInsert;
+
+
+
+	}
+
 	public function Conectar(){
 
 		return $this->GetConn();
