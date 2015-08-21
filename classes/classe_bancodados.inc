@@ -20,7 +20,7 @@ abstract class BancoDados {
 
 	abstract public function Conectar();
 	abstract public function executaSQL($_sql);
-	//abstract protected function SetNumRows();
+	
 	//abstract protected function navegainterno($_pos);
 	//abstract protected function proximointerno();
 	//abstract public function escapeString($_str);
@@ -82,6 +82,39 @@ abstract class BancoDados {
 
 	}
 
+	public function find($onde, $peloque, $qualvalor, $buscaInterna = false){
+
+		$conector = ' = ';
+
+		if( $buscaInterna && !is_numeric($qualvalor) ){
+
+			$conector = " LIKE ";
+			$qualvalor = "%$qualvalor%";
+
+		}
+
+		if( !is_numeric($qualvalor) ){
+
+			$qualvalor = "'$qualvalor'";
+		}
+
+		$sql = "select * from $onde where $peloque $conector $qualvalor";
+
+		$retorno = $this->executaSQL($sql);
+
+		$this->SetNumRows($retorno);
+		$this->SetResult($retorno);
+		return $retorno;
+
+	}
+
+
+
+	public function SetNumRows($retorno){
+
+		$this->_numrows = $retorno->num_rows; 
+	}
+
 	protected function isSELECT($_sql,$_res) {
 	}
 
@@ -89,27 +122,77 @@ abstract class BancoDados {
 	}
 
 	public function getNumRows() {
+
+		return $this->_numrows;
+	}
+
+	public function navega($registro) {
+
+		
+
+		if($registro == 'primeiro'){
+			return $this->primeiro();
+		}
+		if($registro == 'ultimo'){
+			return $this->ultimo();
+		}
+
+		return $this->GetResultado($registro);
+	}
+
+	public function GetResultado($registro){
+
+		if($registro >= 0 && $this->resultado->data_seek($registro) ){
+
+				return $this->resultado->fetch_assoc();
+			
+			} else if($registro > 0) {
+				
+				return $this->ultimo();
+			} else {
+
+				return $this->primeiro();
+			}
+
+	}
+
+	public function primeiro() {
+
+		return $this->GetResultado(0);
+	}
+
+	public function SetResult($resultado){
+		$this->resultado = $resultado;
+	}
+
+	public function proximo() {
+
+		$pos = $this->_posatual + 1;
+
+		return $resultSet->GetResultado($pos);
+		
+	}
+
+
+	public function anterior() {
+
+		$resultSet = $this->GetResultado();
+
+		return $resultSet->next_result();
+	}
+
+	public function ultimo() {
+
+		$ultimo = $this->getNumRows()-1;
+		return $this->GetResultado($ultimo);
+
 	}
 
 	public function transforma() {
 	}
 
 
-	public function navega() {
-	}
-
-	public function primeiro() {
-	}
-
-	public function proximo() {
-	}
-
-	public function anterior() {
-	}
-
-	public function ultimo() {
-	}
-
+	
 	public function getDadosAtual() {
 	}
 
