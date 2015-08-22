@@ -82,6 +82,34 @@ abstract class BancoDados {
 
 	}
 
+	public function atualizar($tableName, $colunaReferencia, $valorReferencia, $valoresParaAtualizar){
+
+
+$arrValoresParaAtualizar = array();
+
+foreach($valoresParaAtualizar as $chave => $valor){
+
+	$arrValoresParaAtualizar[] = " $chave='$valor' ";
+
+}
+
+$strValoresParaAtualizar = implode(', ', $arrValoresParaAtualizar);
+
+$strSql = "UPDATE $tableName
+			SET $strValoresParaAtualizar
+			WHERE $colunaReferencia=$valorReferencia";
+
+// @TODO: incluir startTransaction
+// @TODO: incluir executaSQL armazenando o retorno
+// @TODO: se executaSQL retornar sucesso, commit, se falha, ROLLBACK
+// @TODO: retornar o resultado do executaSQL (return)
+
+
+return $strSql;
+	}
+
+
+
 	public function find($onde, $peloque, $qualvalor, $buscaInterna = false){
 
 		$conector = ' = ';
